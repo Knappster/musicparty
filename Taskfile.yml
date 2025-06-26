@@ -2,10 +2,6 @@
 
 version: "3"
 
-vars:
-  NODE_ARGS: -it --rm -v ${PWD}:/app -w=/app --user "node"
-  NODE_IMAGE: node:23
-
 tasks:
   default:
     silent: true
@@ -36,23 +32,23 @@ tasks:
 
   npm:
     cmds:
-      - docker run {{.NODE_ARGS}} {{.NODE_IMAGE}} {{.CLI_ARGS}}
+      - docker compose run -it --rm npm {{.CLI_ARGS}}
 
   npm-install:
     cmds:
-      - docker run {{.NODE_ARGS}} {{.NODE_IMAGE}} npm install
+      - docker compose run -it --rm npm install
 
   npm-update:
     cmds:
-      - docker run {{.NODE_ARGS}} {{.NODE_IMAGE}} npm update
+      - docker compose run -it --rm npm update
 
   watch:
     cmds:
-      - docker run {{.NODE_ARGS}} -p 5173:5173 {{.NODE_IMAGE}} npm run dev
+      - docker compose run -it --rm -p 5173:5173 npm run dev
 
   build:
     cmds:
-      - docker run {{.NODE_ARGS}} {{.NODE_IMAGE}} npm run build
+      - docker compose run -it --rm npm run build
 
   migrate:
     cmds:

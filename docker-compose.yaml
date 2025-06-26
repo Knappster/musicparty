@@ -111,6 +111,7 @@ services:
     entrypoint: [ "npm" ]
     command: [ "" ]
     working_dir: /app
+    user: node
     volumes:
       - ./:/app
 
