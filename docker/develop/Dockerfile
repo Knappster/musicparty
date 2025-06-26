@@ -13,7 +13,6 @@ RUN apk add --update nodejs npm && \
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/
 
-COPY docker/Caddyfile /
 ENV XDEBUG_MODE=off
 
-ENTRYPOINT ["php", "artisan", "octane:frankenphp", "--watch", "--poll", "--admin-host=0.0.0.0", "--port=80", "--caddyfile=/Caddyfile"]
+ENTRYPOINT ["php", "artisan", "octane:frankenphp", "--watch", "--poll", "--host=localhost", "--port=443", "--https"]

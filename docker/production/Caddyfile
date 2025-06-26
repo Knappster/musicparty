@@ -5,7 +5,7 @@
 {
 	{$CADDY_GLOBAL_OPTIONS}
 
-    metrics
+	metrics
 
 	admin {$CADDY_SERVER_ADMIN_HOST}:{$CADDY_SERVER_ADMIN_PORT}
 
@@ -14,7 +14,7 @@
 	}
 }
 
-{$CADDY_EXTRA_CONFIG}
+{$CADDY_EXTRA_CONFIG} 
 
 {$CADDY_SERVER_SERVER_NAME} {
 	log {

@@ -1,0 +1,75 @@
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+  NODE_ARGS: -it --rm -v ${PWD}:/app -w=/app --user "node"
+  NODE_IMAGE: node:23
+
+tasks:
+  default:
+    silent: true
+
+  up:
+    cmds:
+      - docker compose up -d
+
+  down:
+    cmds:
+      - docker compose down
+
+  image-build:
+    cmds:
+      - docker compose build
+
+  composer:
+    cmds:
+      - docker compose run -it --rm composer {{.CLI_ARGS}}
+
+  composer-install:
+    cmds:
+      - docker compose run -it --rm composer install
+
+  composer-update:
+    cmds:
+      - docker compose run -it --rm composer update
+
+  npm:
+    cmds:
+      - docker run {{.NODE_ARGS}} {{.NODE_IMAGE}} {{.CLI_ARGS}}
+
+  npm-install:
+    cmds:
+      - docker run {{.NODE_ARGS}} {{.NODE_IMAGE}} npm install
+
+  npm-update:
+    cmds:
+      - docker run {{.NODE_ARGS}} {{.NODE_IMAGE}} npm update
+
+  watch:
+    cmds:
+      - docker run {{.NODE_ARGS}} -p 5173:5173 {{.NODE_IMAGE}} npm run dev
+
+  build:
+    cmds:
+      - docker run {{.NODE_ARGS}} {{.NODE_IMAGE}} npm run build
+
+  migrate:
+    cmds:
+      - docker compose run --rm artisan migrate
+
+  seed:
+    cmds:
+      - docker compose run --rm artisan db:seed
+
+  setup:
+    cmds:
+      - docker compose up -d redis db
+      - task: composer-install
+      - docker compose run --rm artisan key:generate
+      - task: migrate
+      - task: seed
+      - docker compose run --rm artisan setup:discord
+      - task: npm-install
+      - task: build
+      - docker compose down

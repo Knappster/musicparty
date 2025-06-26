@@ -27,6 +27,15 @@ Websocket communications are handled using Laravel Reverb.
 
 You will need to create a Discord application and have the Client ID and Client Secret available.
 
+If you have [task](https://taskfile.dev/) installed, you can simply run the following commands:
+
+```bash
+task setup
+task up
+```
+
+Otherwise:
+
 ```bash
 cp .env.example .env
 docker compose up -d redis db
@@ -34,13 +43,13 @@ docker compose run --rm composer install
 docker compose run --rm artisan key:generate
 docker compose run --rm artisan migrate
 docker compose run --rm artisan db:seed
-docker compose run --rm artisan control:setup-discord
+docker compose run --rm artisan setup:discord
 docker compose run --rm npm install
 docker compose run --rm npm run build
 docker compose up -d
 ```
 
-Add the redirect URLs from the `control:setup-discord` step to your Discord OAuth2 configuration.
+Add the redirect URLs from the `setup:discord` step to your Discord OAuth2 configuration.
 
 You should now be able to login. The first user will be given the admin role.
 
