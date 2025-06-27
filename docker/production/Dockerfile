@@ -5,17 +5,17 @@ WORKDIR /app/
 ENV HOME=/tmp
 RUN mkdir -p /app && \
     install-php-extensions \
-        pcntl \
-        redis
+    pcntl \
+    redis
 COPY --from=composer:2.8 /usr/bin/composer /usr/bin/composer
 COPY . /app/
 COPY docker/production/production.env /app/.env
 
 RUN composer install \
-        --no-dev \
-        --no-progress \
-        --optimize-autoloader \
-        --prefer-dist
+    --no-dev \
+    --no-progress \
+    --optimize-autoloader \
+    --prefer-dist
 
 # Use the node23 image to do an npm install
 FROM node:23 AS npm
@@ -36,7 +36,7 @@ COPY --from=npm /app /app
 COPY docker/production/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-COPY docker/Caddyfile /
+COPY docker/production/Caddyfile /
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["php",  "artisan",  "octane:frankenphp", "--caddyfile=/Caddyfile", "--admin-host=0.0.0.0", "--port=80"]
