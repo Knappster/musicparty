@@ -2,10 +2,15 @@
 
 version: "3"
 
-tasks:
-  default:
-    silent: true
+env:
+  UID:
+    sh: id -u
+  GID:
+    sh: id -g
 
+dotenv: [".env"]
+
+tasks:
   up:
     cmds:
       - docker compose up -d

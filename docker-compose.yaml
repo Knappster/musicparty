@@ -20,8 +20,10 @@ services:
       - "443:443"
       - "443:443/udp"
     depends_on:
-      - redis
-      - db
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   reverb:
     build:
@@ -31,8 +33,10 @@ services:
     volumes:
       - ./:/app
     depends_on:
-      - redis
-      - db
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     entrypoint: [ "php", "artisan", "reverb:start", "--host=0.0.0.0", "--debug", "--port=80" ]
     healthcheck:
       disable: true
@@ -47,8 +51,10 @@ services:
     volumes:
       - ./:/app
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     healthcheck:
       disable: true
 
@@ -62,8 +68,10 @@ services:
     volumes:
       - ./:/app
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     healthcheck:
       disable: true
 
@@ -77,10 +85,21 @@ services:
       MYSQL_PASSWORD: "${DB_PASSWORD}"
     volumes:
       - dbdata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${DB_USERNAME}", "-p${DB_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   redis:
     image: redis:6.2.6
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
 
   composer:
     profiles: [ "composer" ]
@@ -89,6 +108,8 @@ services:
       dockerfile: docker/develop/Dockerfile
     entrypoint: [ "composer" ]
     command: [ "--version" ]
+    user: "${UID}:${GID}"
+    working_dir: /app
     volumes:
       - ./:/app
     healthcheck:
@@ -124,8 +145,10 @@ services:
     volumes:
       - ./:/app/
     depends_on:
-      - redis
-      - db
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     healthcheck:
       disable: true
 
@@ -160,10 +183,26 @@ services:
     volumes:
       - ./:/app/
     depends_on:
-      - redis
-      - db
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     healthcheck:
       disable: true
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: ${DB_HOST}
+      MYSQL_ROOT_PASSWORD: root
+      PMA_USER: ${DB_USERNAME}
+      PMA_PASSWORD: ${DB_PASSWORD}
+      UPLOAD_LIMIT: 50M
+    depends_on:
+      db:
+        condition: service_healthy
 
 volumes:
   dbdata:
