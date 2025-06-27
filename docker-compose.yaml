@@ -16,9 +16,7 @@ services:
       - CADDY_SERVER_FRANKENPHP_OPTIONS=
       - APP_INDEX_FILE=index.php
     ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
+      - "9000:80"
     depends_on:
       db:
         condition: service_healthy

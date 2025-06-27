@@ -15,4 +15,4 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/
 
 ENV XDEBUG_MODE=off
 
-ENTRYPOINT ["php", "artisan", "octane:frankenphp", "--watch", "--poll", "--host=localhost", "--port=443", "--https"]
+ENTRYPOINT ["php", "artisan", "octane:frankenphp", "--watch", "--poll", "--host=127.0.0.1", "--port=80"]
